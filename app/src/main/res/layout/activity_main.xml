@@ -14,13 +14,6 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="100dp">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start record"
-            android:id="@+id/btnrecord"
-            android:onClick="btnrecord"
-            android:layout_weight="1" />
 
         <Button
             android:layout_width="wrap_content"
@@ -35,7 +28,6 @@
             android:layout_height="wrap_content"
             android:text="Stop"
             android:id="@+id/btnstop"
-            android:onClick="btnstop"
             android:layout_gravity="right"
             android:layout_weight="1" />
 

@@ -6,8 +6,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +22,7 @@ public class MainActivity extends Activity  implements LocationListener{
     TextView viewLat;
     TextView viewLong;
 
-    String strLat;
-    private View handler;
+    private static final String TAG = "myApp";
 
 
     @Override
@@ -38,47 +37,45 @@ public class MainActivity extends Activity  implements LocationListener{
         viewLat = (TextView) findViewById(R.id.viewlatitude);
         viewLong = (TextView) findViewById(R.id.viewlongtitude);
 
-
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
 
-        String strLat = String.format("%f", location.getLatitude());
-        String strLong = String.format("%f", location.getLongitude());
+        final String strLat = String.format("%f", location.getLatitude());
+        final String strLong = String.format("%f", location.getLongitude());
 
         viewLat.setText(strLat);
         viewLong.setText(strLong);
 
+
+        writeTofile("Latitude" +strLat);
+        Log.v(TAG, strLat);
+
     }
 
-    final int Two_SECONDS = 2000;
-    public void scheduleSendData() {
-        handler.postDelayed(new Runnable() {
+    private static final Handler handler = new Handler();
+
+    private void writeTofile(final String data) {
+        final Runnable program = new Runnable() {
             @Override
             public void run() {
-                writeTofile();
-                handler.postDelayed(this, Two_SECONDS);
+                try {
+                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("sdcard/GPSTracker.txt", Context.MODE_APPEND));
+                    outputStreamWriter.write(data);
+                    outputStreamWriter.close();
+                }
+                catch (IOException e) {
+                    Log.e("Exception", "File write failed: " + e.toString());
+                }
+                handler.postDelayed(this, 2000);
+
             }
-        }, Two_SECONDS);
+        };
+        handler.postDelayed(program, 1000);
     }
 
-    public void btnstop() {
-        handler.removeCallbacks(null);
-    }
-
-
-    private void writeTofile(Location location) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("GPSTracker.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write("Latitude "+location.getLatitude());
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
 
 
 
